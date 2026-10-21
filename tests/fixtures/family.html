@@ -1,0 +1,11 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Семейная демоформа</title>
+<style>body{max-width:720px;margin:40px auto;font:16px/1.5 system-ui;padding:20px}fieldset{margin:20px 0;padding:20px}label{display:block;margin:12px 0}input{display:block;padding:8px;font:inherit}button{padding:12px}</style></head>
+<body><h1>Проверка заполнения семьи</h1><p>Используйте только синтетические профили из расширения. Это тестовая страница без покупки.</p>
+<form id="family"><fieldset data-person-index="0"><legend>Участник 1</legend><label>Имя <input name="first_name" required autocomplete="off"></label>
+<label>Фамилия <input name="last_name" required autocomplete="off"></label>
+<label>Дата рождения <input name="birth_date" type="date" required></label>
+<label>Номер документа <input name="passport_number" required autocomplete="off"></label></fieldset><fieldset data-person-index="1"><legend>Участник 2</legend><label>Имя <input name="first_name" required autocomplete="off"></label>
+<label>Фамилия <input name="last_name" required autocomplete="off"></label>
+<label>Дата рождения <input name="birth_date" type="date" required></label>
+<label>Номер документа <input name="passport_number" required autocomplete="off"></label></fieldset><button type="submit">Проверить вручную</button></form><output id="submitted">Форма не отправлена</output>
+<script>document.querySelector('form').addEventListener('submit',e=>{e.preventDefault();document.querySelector('#submitted').textContent='Проверено пользователем — покупки нет';});</script></body></html>

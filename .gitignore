@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+.runtime/
+*.log
+.DS_Store
+profiles*.json
+vault*.json
