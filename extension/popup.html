@@ -1,9 +1,8 @@
-<!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><title>Purchase Assistant</title>
-<link rel="stylesheet" href="popup.css"></head>
-<body><h1>Purchase Assistant</h1><p>Прототип · только тестовые данные</p>
-<p>Откройте локальную демоформу. Участники заполняются в порядке списка.</p>
-<div id="people"></div><button id="preview">Проверить форму</button>
-<label><input type="checkbox" id="consent">Разрешаю заполнить выбранные тестовые профили, включая номера документов.</label>
-<button id="fill" disabled>Заполнить</button><output id="status" role="status">Проверьте форму перед заполнением.</output>
-<script type="module" src="popup.js"></script></body></html>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Purchase Assistant</title><link rel="stylesheet" href="popup.css"></head>
+<body><header><h1>Purchase Assistant</h1><button id="lock" class="secondary" hidden>Заблокировать</button></header>
+<button id="manage" class="secondary">Мои люди · добавить или изменить</button>
+<section id="gate" hidden><p id="gateText"></p><form id="unlockForm"><label>Пароль хранилища<input id="password" type="password" autocomplete="off" maxlength="256" required></label><button id="unlock">Разблокировать</button></form></section>
+<section id="workspace" hidden><p>Выберите участников и документ для каждого. Порядок заполнения — как в списке.</p><div id="people"></div><p id="empty" hidden>Профилей пока нет. Добавьте людей в разделе «Мои люди».</p>
+<p class="note">Заполнение пока поддерживается только на локальной демоформе. Большой театр ещё не подключён.</p>
+<button id="preview">Проверить форму</button><label class="check"><input type="checkbox" id="consent">Разрешаю заполнить данные выбранных людей, включая документы, в проверенной вкладке.</label><button id="fill" disabled>Заполнить</button></section>
+<output id="status" role="status" aria-live="polite"></output><p class="note">Пароль нужен при каждом открытии окна расширения. Подготовьте данные до старта продаж.</p><script type="module" src="popup.js"></script></body></html>

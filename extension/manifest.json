@@ -1,9 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Purchase Assistant — prototype",
-  "version": "0.1.0",
-  "description": "Выбор членов семьи и проверяемое заполнение тестовой формы. Только синтетические данные.",
-  "permissions": ["activeTab", "scripting"],
-  "action": {"default_title": "Purchase Assistant", "default_popup": "popup.html"},
-  "content_security_policy": {"extension_pages": "script-src 'self'; object-src 'none'"}
+  "name": "Purchase Assistant",
+  "version": "0.2.0",
+  "description": "Зашифрованные локальные профили семьи и проверяемое заполнение форм.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "action": {
+    "default_title": "Purchase Assistant",
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
+  "options_ui": {
+    "page": "people.html",
+    "open_in_tab": true
+  }
 }

@@ -76,9 +76,9 @@ test('rejects ambiguous documents and participant selection', () => {
 for (const url of ['https://example.com/family.html', 'http://127.0.0.1:4173/other.html', 'http://127.0.0.1:4174/family.html']) {
   test(`refuses unsupported URL ${url}`, () => {const p = page(url); try {assert.equal(p.fill().ok, false);} finally {p.close();}});
 }
-test('manifest grants only on-demand active-tab access', async () => {
+test('manifest grants on-demand access and local storage without all-sites access', async () => {
   const manifest = JSON.parse(await readFile(new URL('../dist/extension/manifest.json', import.meta.url), 'utf8'));
-  assert.deepEqual(manifest.permissions, ['activeTab', 'scripting']);
+  assert.deepEqual(manifest.permissions, ['activeTab', 'scripting', 'storage']);
   assert.equal(manifest.host_permissions, undefined);
   assert.equal(manifest.background, undefined);
 });

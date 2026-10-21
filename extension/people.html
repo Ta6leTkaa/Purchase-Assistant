@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Мои люди — Purchase Assistant</title><link rel="stylesheet" href="people.css"></head>
+<body><main><header><div><p class="eyebrow">PURCHASE ASSISTANT</p><h1>Мои люди</h1><p>Сохраните данные семьи один раз, чтобы быстрее оформлять билеты.</p></div><button id="lock" hidden class="secondary">Заблокировать</button></header>
+<output id="status" role="status" aria-live="polite"></output>
+<section id="gate" class="panel" hidden><h2 id="gateTitle"></h2><p id="gateText"></p>
+<form id="gateForm"><label>Пароль хранилища<input id="password" type="password" autocomplete="off" maxlength="256" required></label>
+<label id="repeatLabel" hidden>Повторите пароль<input id="repeatPassword" type="password" autocomplete="off" maxlength="256"></label>
+<p id="recoveryNotice" hidden>Сохраните пароль в надёжном месте. Восстановить его нельзя. Для переноса на другое устройство нужна зашифрованная резервная копия и её пароль.</p>
+<button id="gateSubmit">Разблокировать</button></form></section>
+<section id="workspace" hidden><div class="toolbar"><div><h2>Семья и близкие</h2><p id="count"></p></div><button id="add">Добавить человека</button></div>
+<p id="empty" class="panel" hidden>Здесь пока никого нет. Добавьте первого человека — обязательны только имя и фамилия.</p><div id="people" class="cards"></div>
+<details class="panel"><summary>Защита и резервная копия</summary><p>Данные хранятся на этом устройстве в зашифрованном виде. Хранилище блокируется после 5 минут бездействия. Закрытие этой вкладки также блокирует её.</p>
+<button id="export" class="secondary">Скачать зашифрованную копию</button>
+<form id="changeForm"><h3>Изменить пароль</h3><label>Текущий пароль<input id="oldPassword" type="password" autocomplete="off" required maxlength="256"></label><label>Новый пароль, от 12 символов<input id="newPassword" type="password" autocomplete="off" required minlength="12" maxlength="256"></label><label>Повторите новый пароль<input id="newPasswordRepeat" type="password" autocomplete="off" required minlength="12" maxlength="256"></label><button>Изменить пароль</button></form><p>Старые резервные копии сохраняют старый пароль. После смены скачайте новую копию.</p></details></section>
+<details id="restorePanel" class="panel"><summary>Восстановить из резервной копии</summary><p>Используйте только зашифрованную копию Purchase Assistant. Она полностью заменит текущий список. Пароль берётся от выбранной копии.</p>
+<form id="restoreForm"><label>Файл резервной копии<input id="backupFile" type="file" accept=".json,application/json" required></label><label>Пароль резервной копии<input id="backupPassword" type="password" autocomplete="off" maxlength="256" required></label><label class="check"><input id="replaceConsent" type="checkbox" required>Я понимаю, что текущие профили будут заменены данными из копии.</label><button>Восстановить и заменить профили</button></form></details>
+<footer>Данные не отправляются на сервер. После заполнения сайта введённые поля остаются на странице. Удаление расширения удаляет его локальное хранилище — заранее скачайте копию.</footer></main>
+<dialog id="editor"><form id="personForm"><h2 id="editorTitle">Новый человек</h2><output id="editorStatus" role="alert"></output>
+<div class="grid"><label>Имя<input name="firstName" required maxlength="100" autocomplete="off"></label><label>Фамилия<input name="lastName" required maxlength="100" autocomplete="off"></label><label>Отчество, если есть<input name="middleName" maxlength="100" autocomplete="off"></label><label>Название профиля, необязательно<input name="displayName" maxlength="100" placeholder="Например, мама" autocomplete="off"></label><label>Дата рождения<input name="birthDate" type="date" min="1900-01-01"></label><label>Email<input name="email" type="email" maxlength="254" autocomplete="off"></label><label>Телефон<input name="phone" type="tel" maxlength="40" autocomplete="off"></label></div>
+<h3>Документы</h3><p>Можно добавить несколько документов. Для заполнения вы выберете нужный.</p><div id="documents"></div><button type="button" id="addDocument" class="secondary">Добавить документ</button>
+<div class="actions"><button type="button" id="cancelEdit" class="secondary">Отмена</button><button id="savePerson">Сохранить человека</button></div></form></dialog>
+<dialog id="deleteDialog"><h2>Удалить человека?</h2><p id="deleteText"></p><p>Это действие удалит профиль и его документы из текущего хранилища.</p><div class="actions"><button id="cancelDelete" class="secondary">Отмена</button><button id="confirmDelete" class="danger">Удалить профиль</button></div></dialog>
+<script type="module" src="people.js"></script></body></html>
