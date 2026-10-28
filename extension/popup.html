@@ -5,4 +5,17 @@
 <section id="workspace" hidden><p>Выберите участников и документ для каждого. Порядок заполнения — как в списке.</p><div id="people"></div><p id="empty" hidden>Профилей пока нет. Добавьте людей в разделе «Мои люди».</p>
 <p class="note">Заполнение пока поддерживается только на локальной демоформе. Большой театр ещё не подключён.</p>
 <button id="preview">Проверить форму</button><label class="check"><input type="checkbox" id="consent">Разрешаю заполнить данные выбранных людей, включая документы, в проверенной вкладке.</label><button id="fill" disabled>Заполнить</button></section>
-<output id="status" role="status" aria-live="polite"></output><p class="note">Пароль нужен при каждом открытии окна расширения. Подготовьте данные до старта продаж.</p><script type="module" src="popup.js"></script></body></html>
+<section id="seatPlanner" class="planner"><h2>Подбор билетов</h2><p class="note">Самостоятельно читает схему текущего показа и ищет варианты по вашим условиям. Во время поиска не трогайте схему. Бронь не создаётся.</p>
+
+<button id="refreshPlanAreas" class="secondary">Прочитать секторы автоматически</button>
+<form id="seatPlanForm"><label>Билетов (1–4)<input id="planQuantity" type="number" min="1" max="4" step="1" value="2" required></label>
+<label>Не дороже за билет, ₽<input id="planPerTicket" type="text" inputmode="decimal" maxlength="20" placeholder="Например, 8000" required></label>
+<label>Не дороже за весь заказ, ₽<input id="planTotal" type="text" inputmode="decimal" maxlength="20" placeholder="Необязательно: по лимиту за билет"></label>
+<label>Сектор<select id="planArea"><option value="">Любой найденный сектор</option></select></label>
+<label class="check"><input id="planAdjacent" type="checkbox" checked>Искать рядом: один сектор, ряд и последовательные номера</label>
+<label class="check"><input id="planPassport" type="checkbox">Рассматривать места «Доступно по паспорту»</label>
+<button id="planSeats">Найти билеты</button></form><button id="cancelSeatSearch" class="secondary" hidden>Остановить поиск</button><output id="planStatus" role="status" aria-live="polite"></output><div id="seatOffers"></div>
+<p class="note">Наблюдения действуют до 2 минут и не гарантируют наличие. Соседство, цену и лимит выбранного тарифа проверьте на сайте перед покупкой.</p></section>
+<details id="collectSeats"><summary>Ручная диагностика подсказок</summary><p class="note">Чтение ручных наведений на 2 минуты. Клики, выбор мест и бронирование не выполняются.</p><button id="startHover" class="secondary">Начать чтение подсказок</button><button id="readHover" class="secondary">Показать собранные места</button><button id="stopHover" class="secondary">Остановить чтение</button><output id="hoverStatus" role="status"></output><div id="hoverSamples"></div><button id="downloadHover" class="secondary" hidden>Скачать данные подсказок</button></details>
+<details id="diagnostics"><summary>Проверка подключения к Большому</summary><p class="note">Показывает структуру формы и геометрию возможных мест без значений полей, ФИО, номеров документов и адресов ссылок. Не заполняет форму и не бронирует места.</p><button id="inspectBolshoi" class="secondary">Проверить открытую страницу</button><output id="discoveryStatus" role="status"></output><pre id="discoveryReport" hidden></pre><button id="downloadDiscovery" class="secondary" hidden>Скачать отчёт о структуре</button></details>
+<output id="status" role="status" aria-live="polite"></output><p class="note">Пароль нужен только для профилей людей. Поиск мест работает без разблокировки хранилища.</p><script type="module" src="popup.js"></script></body></html>

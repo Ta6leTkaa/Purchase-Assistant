@@ -1,3 +1,6 @@
+import {setupSeatPlanner} from "./seat-planner-ui.js";
+import {controlBolshoiHover, type HoverReport} from "./bolshoi-hover.js";
+import {inspectBolshoiPage} from "./bolshoi-inspector.js";
 import {documentLabels, maskedDocument, type PersonProfile} from "./profile.js";
 import {autofillPage} from "./autofill.js";
 import {Vault, VAULT_STORAGE_KEY} from "./vault.js";
@@ -99,3 +102,72 @@ void vault.exists().then(exists => {
   $("gateText").textContent = exists ? "Разблокируйте профили для этой покупки." : "Создайте хранилище в разделе «Мои люди».";
   $("unlockForm").hidden = !exists;
 }).catch(() => {status.textContent = "Не удалось прочитать хранилище. Перезагрузите расширение.";});
+
+// Discovery is independent of the vault and does not request profile data.
+let discovery: string | null = null;
+const inspectButton = $<HTMLButtonElement>("inspectBolshoi");
+inspectButton.addEventListener("click", () => {
+  if (inspectButton.disabled) return;
+  inspectButton.disabled = true; discovery = null;
+  $("downloadDiscovery").hidden = true; $("discoveryReport").hidden = true; $("discoveryReport").textContent = "";
+  $("discoveryStatus").textContent = "Читаем структуру страницы…";
+  void (async () => {
+    try {
+      const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+      if (tab?.id === undefined) throw new Error();
+      const [execution] = await chrome.scripting.executeScript({target: {tabId: tab.id}, func: inspectBolshoiPage});
+      const result = execution?.result;
+      if (!result) throw new Error();
+      if (!result.ok) {$("discoveryStatus").textContent = result.message; return;}
+      discovery = JSON.stringify(result.report, null, 2);
+      $("discoveryReport").textContent = discovery; $("discoveryReport").hidden = false; $("downloadDiscovery").hidden = false;
+      $("discoveryStatus").textContent = `Полей: ${result.report.controls.length}. Встроенных окон: ${result.report.frameCount} (их содержимое не прочитано). Кандидатов на места: ${result.report.mapStructure.candidateCount}. Их доступность и бронь не подтверждены.`;
+    } catch {$("discoveryStatus").textContent = "Не удалось прочитать страницу. Откройте официальный билетный сайт и нажмите значок расширения в этой вкладке.";}
+    finally {inspectButton.disabled = false;}
+  })();
+});
+$("downloadDiscovery").addEventListener("click", () => {
+  if (!discovery) return;
+  const url = URL.createObjectURL(new Blob([discovery], {type: "application/json"}));
+  const link = document.createElement("a"); link.href = url; link.download = "bolshoi-page-structure.json";
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+// Passive collection survives closing the popup, in the isolated world of this tab only.
+let hoverReport: HoverReport | null = null;
+const hoverButtons = ["startHover", "readHover", "stopHover"].map(id => $<HTMLButtonElement>(id));
+async function hoverCommand(action: "start" | "read" | "stop") {
+  for (const button of hoverButtons) button.disabled = true;
+  hoverReport = null; $("downloadHover").hidden = true; $("hoverSamples").replaceChildren();
+  try {
+    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+    if (tab?.id === undefined) throw new Error();
+    const [execution] = await chrome.scripting.executeScript({target: {tabId: tab.id}, func: controlBolshoiHover, args: [action]});
+    const result = execution?.result;
+    if (!result) throw new Error();
+    if (!result.ok) {$("hoverStatus").textContent = result.message; return;}
+    hoverReport = result.report;
+    const states: Record<HoverReport["status"], string> = {completed: "Автоматический обход завершён.", unsupported: "Не удалось автоматически прочитать подсказки сайта.", interrupted: "Обход остановлен из-за действий на странице.",running: "Чтение включено на 2 минуты. Закройте это окно и наведите курсор на места, не нажимая. Затем откройте расширение и нажмите «Показать собранные места».", stopped: "Чтение остановлено.", expired: "Две минуты истекли. Чтение остановлено.", page_changed: "Страница изменилась, старые наблюдения удалены.", limit_reached: "Собрано 100 мест. Чтение остановлено.", idle: "Сначала включите чтение подсказок.", context_changed: "Условия страницы изменились. Соберите подсказки заново."};
+    $("hoverStatus").textContent = `${states[result.report.status]} Собрано: ${result.report.samples.length}. Привязку к местам ещё нужно проверить; бронь не создаётся.`;
+    for (const seat of result.report.samples) {
+      const line = document.createElement("p");
+      const price = new Intl.NumberFormat("ru-RU", {style: "currency", currency: "RUB"}).format(seat.priceKopecks / 100);
+      const statuses = {available: "Доступно", passport_required: "По паспорту", occupied: "Занято", unavailable: "Недоступно", selected: "Выбрано"};
+      line.textContent = `${seat.area}, ряд ${seat.row}, место ${seat.seat} · ${price} · ${statuses[seat.availability]}`;
+      $("hoverSamples").append(line);
+    }
+    $("downloadHover").hidden = result.report.samples.length === 0;
+  } catch {$("hoverStatus").textContent = "Не удалось прочитать вкладку. Откройте схему мест Большого и повторите действие.";}
+  finally {for (const button of hoverButtons) button.disabled = false;}
+}
+$("startHover").addEventListener("click", () => {void hoverCommand("start");});
+$("readHover").addEventListener("click", () => {void hoverCommand("read");});
+$("stopHover").addEventListener("click", () => {void hoverCommand("stop");});
+$("downloadHover").addEventListener("click", () => {
+  if (!hoverReport) return;
+  const url = URL.createObjectURL(new Blob([JSON.stringify(hoverReport, null, 2)], {type: "application/json"}));
+  const link = document.createElement("a"); link.href = url; link.download = "bolshoi-hover-seats.json";
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+setupSeatPlanner();
